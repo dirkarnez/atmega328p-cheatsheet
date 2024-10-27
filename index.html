@@ -1,39 +1,78 @@
-<script>
-  class Counter extends EventTarget {
-  constructor(initialValue = 0) {
-    super();
-    this.value = initialValue;
-  }
+<!DOCTYPE html>
+<html lang="en">
 
-  // private method starts with "#"
-  #emitChangeEvent() {
-    this.dispatchEvent(new CustomEvent("valuechange", { detail: this.value }));
-  }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-  increment() {
-    this.value++;
-    this.#emitChangeEvent();
-  }
+<body>
+  <script>
+    class MCU extends EventTarget {
+      F_CPU = NaN;
 
-  decrement() {
-    this.value--;
-    this.#emitChangeEvent();
-  }
-}
+      constructor(F_CPU = NaN) {
+        super();
+        this.F_CPU = F_CPU;
+      }
+    }
 
-const initialValue = 0;
-const counter = new Counter(initialValue);
-document.querySelector("#currentValue").innerText = initialValue;
+    const Prescaler = {
+      Prescaler_No: 1,
+      Prescaler_8: 8,
+      Prescaler_64: 64,
+      Prescaler_256: 256,
+      Prescaler_1024: 1024
+    };
 
-counter.addEventListener("valuechange", (event) => {
-  document.querySelector("#currentValue").innerText = event.detail;
-});
+    class ATmega328PCheatsheet extends MCU {
+      constructor() {
+        super();
+        this.F_CPU = 16000000; // 16*10**6
+      }
 
-document.querySelector("#inc").addEventListener("click", () => {
-  counter.increment();
-});
+      timer_0_get_maximum_delay_for_timer_counter_register(prescaler = 1) {
+        return (1 << 8) * (1/(this.F_CPU / prescaler))
+      }
 
-document.querySelector("#dec").addEventListener("click", () => {
-  counter.decrement();
-});
-</script>
+      timer_1_get_maximum_delay_for_timer_counter_register(prescaler = 1) {
+        return (1 << 16) * (1/(this.F_CPU / prescaler))
+      }
+
+      // private method starts with "#"
+      #emitChangeEvent() {
+        this.dispatchEvent(new CustomEvent("valuechange", { detail: this.value }));
+      }
+    }
+
+    const atmega328PCheatsheet = new ATmega328PCheatsheet();
+    console.log(`timer 0 (8 bit) maximum delay with no prescaler: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_No)}`);
+    console.log(`timer 0 (8 bit) maximum delay with prescaler 8: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_8)}`);
+    console.log(`timer 0 (8 bit) maximum delay with prescaler 64: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_64)}`);
+    console.log(`timer 0 (8 bit) maximum delay with prescaler 256: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_256)}`);
+    console.log(`timer 0 (8 bit) maximum delay with prescaler 1024: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_1024)}`);
+
+    console.log(`timer 1 (16 bit) maximum delay with no prescaler: ${atmega328PCheatsheet.timer_1_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_No)}`);
+    console.log(`timer 1 (16 bit) maximum delay with prescaler 8: ${atmega328PCheatsheet.timer_1_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_8)}`);
+    console.log(`timer 1 (16 bit) maximum delay with prescaler 64: ${atmega328PCheatsheet.timer_1_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_64)}`);
+    console.log(`timer 1 (16 bit) maximum delay with prescaler 256: ${atmega328PCheatsheet.timer_1_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_256)}`);
+    console.log(`timer 1 (16 bit) maximum delay with prescaler 1024: ${atmega328PCheatsheet.timer_1_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_1024)}`);
+
+    // const initialValue = 0;
+    // const counter = new Counter(initialValue);
+    // document.querySelector("#currentValue").innerText = initialValue;
+
+    // counter.addEventListener("valuechange", (event) => {
+    //   document.querySelector("#currentValue").innerText = event.detail;
+    // });
+
+    // document.querySelector("#inc").addEventListener("click", () => {
+    //   counter.increment();
+    // });
+
+    // document.querySelector("#dec").addEventListener("click", () => {
+    //   counter.decrement();
+    // });
+  </script>
+</body>
+</html>
