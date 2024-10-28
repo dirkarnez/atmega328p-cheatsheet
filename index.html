@@ -61,8 +61,7 @@ void timer1() {
 
     class ATmega328PCheatsheet extends MCU {
       constructor() {
-        super();
-        this.F_CPU = 16000000; // 16*10**6
+        super(16000000); // 16*10**6
       }
 
       timer_0_get_maximum_delay_for_timer_counter_register(prescaler = 1) {
