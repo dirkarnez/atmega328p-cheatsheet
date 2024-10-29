@@ -23,11 +23,11 @@
 <body>
   <form id="atmega328p-cheatsheet-form">
     <p>Which Timer:</p>
-    <input type="radio" id="timer-0" name="timer-n" value="timer-0">
+    <input type="radio" id="timer-0" name="timer-n" value="0">
     <label for="timer-0">Timer 0</label><br>
-    <input type="radio" id="timer-1" name="timer-n" value="timer-1">
+    <input type="radio" id="timer-1" name="timer-n" value="1">
     <label for="timer-1">Timer 1</label><br>
-    <input type="radio" id="timer-2" name="timer-n" value="timer-2">
+    <input type="radio" id="timer-2" name="timer-n" value="2">
     <label for="timer-2">Timer 2</label><br>
     <br>
     <p>Mode:</p>
@@ -104,14 +104,23 @@
       });
 
       form.addEventListener("change", function() {
-        atmega328PCheatsheet.timer(123).then(text => {
+        const formData = new FormData(form);
+        console.log(`==start==`);
+        for (const pair of formData.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+        console.log(`==end==`);
+
+        atmega328PCheatsheet.timer(
+          formData.get("timer-n"),
+        ).then(text => {
           document.getElementById("code").textContent = text;
           document.querySelectorAll('pre code').forEach((el) => {
             hljs.highlightElement(el);
           });
         });
       });
-      
+
       console.log(`timer 0 (8 bit) maximum delay with no prescaler: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_No)} seconds`);
       console.log(`timer 0 (8 bit) maximum delay with prescaler 8: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_8)} seconds`);
       console.log(`timer 0 (8 bit) maximum delay with prescaler 64: ${atmega328PCheatsheet.timer_0_get_maximum_delay_for_timer_counter_register(Prescaler.Prescaler_64)} seconds`);

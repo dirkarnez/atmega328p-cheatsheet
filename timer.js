@@ -1,6 +1,6 @@
-export default (a) => {
+export default (timeerN) => {
   return `void timer0() {
-    ${a}
+    ${timeerN}
     TCCR0A = 
     (1 << COM0A1) | // 7
     (1 << COM0A0) | // 6
