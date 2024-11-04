@@ -1,3 +1,4 @@
+// https://youtu.be/E_kqCCLsvFs?list=PLlpWU0XxPDVg1T4XCsGebXx7GRPD-5Nmj&t=5433
 void adc_init()
 {
 	// ADMUX = 0b01000000;
