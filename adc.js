@@ -56,3 +56,23 @@ PORTB = ADCH; //give the high byte to PORTB
 }
 return 0;
 }
+
+#include <avr\io.h>
+#include <avr\interrupt.h>
+ISR(ADC_vect){
+PORTD = ADCL; //give the low byte to PORTD
+PORTB = ADCH; //give the high byte to PORTB
+ADCSRA|=(1<<ADSC); //start conversion
+}
+int main (void){
+DDRB = 0xFF; //make Port B an output
+DDRD = 0xFF; //make Port D an output
+DDRA = 0; //make Port A an input for ADC input
+sei(); //enable interrupts
+ADCSRA= 0x8F; //enable and interrupt select ck/128
+ADMUX= 0xC0; //2.56V Vref and ADC0 single-ended
+//input right-justified data
+ADCSRA|=(1<<ADSC); //start conversion
+while (1); //wait forever
+return 0;
+}
