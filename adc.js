@@ -37,3 +37,22 @@ int adc_read(unsigned char channel)
   
 	return ADCW;
 }
+
+
+#include <avr/io.h> //standard AVR header
+int main (void)
+{
+DDRB = 0xFF; //make Port B an output
+DDRD = 0xFF; //make Port D an output
+DDRA = 0; //make Port A an input for ADC input
+ADCSRA= 0x87; //make ADC enable and select ck/128
+ADMUX= 0xC0; //2.56V Vref, ADC0 single ended input
+//data will be right-justified
+while (1){
+ADCSRA|=(1<<ADSC); //start conversion
+while((ADCSRA&(1<<ADIF))==0);//wait for conversion to finish
+PORTD = ADCL; //give the low byte to PORTD
+PORTB = ADCH; //give the high byte to PORTB
+}
+return 0;
+}
